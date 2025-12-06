@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Centrala Butterfly Trust - Home</title>
+    <link rel="stylesheet" href="../public/css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="container nav-container">
+        <a href="index.html" class="logo">
+          <i class="fas fa-butterfly"></i>
+          <span>Centrala Butterfly Trust</span>
+        </a>
+        <div class="nav-links">
+          <a href="index.html" class="active">Home</a>
+          <a href="dashboard.html">Observations</a>
+          <a href="upload.html">Report Sighting</a>
+          <a href="login.html" class="btn btn-login">Login</a>
+          <a href="register.html" class="btn btn-register">Register</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <main class="container">
+      <section class="hero">
+        <h1>Welcome to Centrala Butterfly Trust</h1>
+        <p>
+          Join us in tracking and conserving butterfly populations across
+          Centrala municipality. Your observations help shape our urban planning
+          and conservation efforts.
+        </p>
+        <div class="hero-buttons">
+          <a href="register.html" class="btn btn-primary btn-lg">Join Now</a>
+          <a href="dashboard.html" class="btn btn-outline btn-lg"
+            >View Observations</a
+          >
+        </div>
+      </section>
+
+      <!-- Features -->
+      <section class="features">
+        <div class="feature">
+          <i class="fas fa-binoculars"></i>
+          <h3>Record Sightings</h3>
+          <p>
+            Log butterfly observations with details about species, location, and
+            behavior.
+          </p>
+        </div>
+        <div class="feature">
+          <i class="fas fa-users"></i>
+          <h3>Community Driven</h3>
+          <p>
+            Connect with fellow butterfly enthusiasts and conservationists in
+            Centrala.
+          </p>
+        </div>
+        <div class="feature">
+          <i class="fas fa-chart-line"></i>
+          <h3>Contribute to Science</h3>
+          <p>Your data helps environmental agencies make informed decisions.</p>
+        </div>
+        <div class="feature">
+          <i class="fas fa-camera"></i>
+          <h3>Share Photos</h3>
+          <p>
+            Upload images of your butterfly sightings to help with
+            identification.
+          </p>
+        </div>
+      </section>
+
+      <!-- Statistics -->
+      <section class="card">
+        <h2 class="card-title">Our Impact So Far</h2>
+        <div class="stats-grid">
+          <div class="stat">
+            <h3 id="totalObservations">0</h3>
+            <p>Observations Recorded</p>
+          </div>
+          <div class="stat">
+            <h3 id="totalUsers">0</h3>
+            <p>Registered Members</p>
+          </div>
+          <div class="stat">
+            <h3 id="speciesCount">0</h3>
+            <p>Butterfly Species Tracked</p>
+          </div>
+          <div class="stat">
+            <h3 id="locationsCount">0</h3>
+            <p>Centrala Locations Covered</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Recent Observations Preview -->
+      <section class="card">
+        <div class="card-header">
+          <h2 class="card-title">Recent Observations</h2>
+          <a href="dashboard.html" class="btn btn-outline">View All</a>
+        </div>
+        <div class="posts-grid" id="recentPosts">
+          <!-- Recent posts will be loaded here -->
+        </div>
+      </section>
+
+      <!-- CTA Section -->
+      <section class="card text-center">
+        <h2>Ready to Make a Difference?</h2>
+        <p>
+          Join our community today and start contributing to butterfly
+          conservation in Centrala.
+        </p>
+        <a href="register.html" class="btn btn-primary btn-lg"
+          >Get Started Now</a
+        >
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container footer-content">
+        <div class="footer-section">
+          <h3>Centrala Butterfly Trust</h3>
+          <p>
+            Dedicated to tracking and conserving butterfly populations across
+            Centrala municipality through community science.
+          </p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="dashboard.html">Observations</a></li>
+            <li><a href="upload.html">Report Sighting</a></li>
+            <li><a href="login.html">Login</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Contact</h3>
+          <p><i class="fas fa-envelope"></i> info@centralabutterfly.org</p>
+          <p><i class="fas fa-phone"></i> (123) 456-7890</p>
+          <p>
+            <i class="fas fa-map-marker-alt"></i> Centrala Environmental Agency
+          </p>
+        </div>
+      </div>
+      <div
+        class="container text-center"
+        style="
+          margin-top: 2rem;
+          padding-top: 2rem;
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+        "
+      >
+        <p>&copy; 2024 Centrala Butterfly Trust. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script>
+      const API_BASE_URL = "http://localhost:3000/api";
+
+      // Load recent posts and stats
+      document.addEventListener("DOMContentLoaded", async () => {
+        try {
+          // Load recent posts
+          const response = await fetch(`${API_BASE_URL}/posts`);
+          if (response.ok) {
+            const posts = await response.json();
+            const recentPosts = posts.slice(0, 3);
+
+            const postsContainer = document.getElementById("recentPosts");
+            if (recentPosts.length > 0) {
+              recentPosts.forEach((post) => {
+                const postCard = `
+                                <div class="post-card">
+                                    ${
+                                      post.imageUrl
+                                        ? `<img src="${API_BASE_URL}${post.imageUrl}" alt="Butterfly observation" class="post-image">`
+                                        : `<div class="post-image" style="background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+                                            <i class="fas fa-butterfly" style="font-size: 3rem; color: #ccc;"></i>
+                                        </div>`
+                                    }
+                                    <div class="post-content">
+                                        <div class="post-meta">
+                                            <span class="post-user">${
+                                              post.username
+                                            }</span>
+                                            <span class="post-location">${
+                                              post.location
+                                            }</span>
+                                        </div>
+                                        <h4 class="post-title">${
+                                          post.butterflyType
+                                        }</h4>
+                                        <p class="post-description">${
+                                          post.comments ||
+                                          "No description provided"
+                                        }</p>
+                                        <small>${new Date(
+                                          post.observationDate
+                                        ).toLocaleDateString()} at ${
+                  post.observationTime
+                }</small>
+                                    </div>
+                                </div>
+                            `;
+                postsContainer.innerHTML += postCard;
+              });
+            } else {
+              postsContainer.innerHTML =
+                '<p class="text-center">No observations yet. Be the first to report a sighting!</p>';
+            }
+          }
+
+          document.getElementById("totalObservations").textContent = "127";
+          document.getElementById("totalUsers").textContent = "42";
+          document.getElementById("speciesCount").textContent = "8";
+          document.getElementById("locationsCount").textContent = "18";
+        } catch (error) {
+          console.error("Error loading data:", error);
+        }
+      });
+    </script>
+  </body>
+</html>

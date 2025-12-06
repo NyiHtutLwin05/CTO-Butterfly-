@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - Centrala Butterfly Trust</title>
+    <link rel="stylesheet" href="../public/css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="container nav-container">
+        <a href="index.html" class="logo">
+          <i class="fas fa-butterfly"></i>
+          <span>Centrala Butterfly Trust</span>
+        </a>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="login.html" class="btn btn-login">Login</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Registration Form -->
+    <main class="container">
+      <div class="card" style="max-width: 600px; margin: 3rem auto">
+        <div class="card-header">
+          <h2 class="card-title">Create Your Account</h2>
+          <p>
+            Join our community of butterfly enthusiasts and conservationists.
+          </p>
+        </div>
+
+        <div id="messageContainer"></div>
+
+        <form id="registerForm">
+          <div
+            class="form-row"
+            style="display: flex; gap: 1rem; margin-bottom: 1.5rem"
+          >
+            <div class="form-group" style="flex: 1">
+              <label for="username" class="form-label">Username *</label>
+              <input
+                type="text"
+                id="username"
+                class="form-control"
+                required
+                placeholder="Choose a username"
+              />
+              <div class="form-text">Must be at least 3 characters</div>
+            </div>
+
+            <div class="form-group" style="flex: 1">
+              <label for="email" class="form-label">Email Address *</label>
+              <input
+                type="email"
+                id="email"
+                class="form-control"
+                required
+                placeholder="Enter your email"
+              />
+            </div>
+          </div>
+
+          <div
+            class="form-row"
+            style="display: flex; gap: 1rem; margin-bottom: 1.5rem"
+          >
+            <div class="form-group" style="flex: 1">
+              <label for="password" class="form-label">Password *</label>
+              <input
+                type="password"
+                id="password"
+                class="form-control"
+                required
+                placeholder="Create a password"
+              />
+              <div class="form-text">Minimum 6 characters</div>
+            </div>
+
+            <div class="form-group" style="flex: 1">
+              <label for="confirmPassword" class="form-label"
+                >Confirm Password *</label
+              >
+              <input
+                type="password"
+                id="confirmPassword"
+                class="form-control"
+                required
+                placeholder="Confirm your password"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="form-check">
+              <input
+                type="checkbox"
+                id="terms"
+                class="form-check-input"
+                required
+              />
+              <label for="terms" class="form-check-label">
+                I agree to the
+                <a href="#" style="text-decoration: none">Terms of Service</a>
+                and <a href="#" style="text-decoration: none">Privacy Policy</a>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-block">
+              <span id="submitText">Create Account</span>
+              <div
+                id="loadingSpinner"
+                class="spinner hidden"
+                style="
+                  display: inline-block;
+                  width: 20px;
+                  height: 20px;
+                  margin-left: 10px;
+                "
+              ></div>
+            </button>
+          </div>
+
+          <div class="text-center">
+            <p>
+              Already have an account?
+              <a
+                href="login.html"
+                style="text-decoration: none; font-weight: 600"
+                >Login here</a
+              >
+            </p>
+          </div>
+        </form>
+      </div>
+
+      <!-- Benefits Section -->
+      <div class="card" style="max-width: 600px; margin: 2rem auto">
+        <h3 class="card-title">Why Register?</h3>
+        <ul style="list-style: none; padding: 0">
+          <li style="padding: 0.5rem 0">
+            <i
+              class="fas fa-check-circle"
+              style="color: var(--success); margin-right: 10px"
+            ></i>
+            Report butterfly sightings
+          </li>
+          <li style="padding: 0.5rem 0">
+            <i
+              class="fas fa-check-circle"
+              style="color: var(--success); margin-right: 10px"
+            ></i>
+            Edit or delete your observations
+          </li>
+          <li style="padding: 0.5rem 0">
+            <i
+              class="fas fa-check-circle"
+              style="color: var(--success); margin-right: 10px"
+            ></i>
+            Connect with other enthusiasts
+          </li>
+          <li style="padding: 0.5rem 0">
+            <i
+              class="fas fa-check-circle"
+              style="color: var(--success); margin-right: 10px"
+            ></i>
+            Contribute to conservation efforts
+          </li>
+          <li style="padding: 0.5rem 0">
+            <i
+              class="fas fa-check-circle"
+              style="color: var(--success); margin-right: 10px"
+            ></i>
+            Receive updates and newsletters
+          </li>
+        </ul>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container text-center">
+        <p>&copy; 2024 Centrala Butterfly Trust. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script>
+      // API Base URL
+      const API_BASE_URL = "http://localhost:3000/api";
+
+      document
+        .getElementById("registerForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          // Validate passwords match
+          const password = document.getElementById("password").value;
+          const confirmPassword =
+            document.getElementById("confirmPassword").value;
+
+          if (password !== confirmPassword) {
+            showMessage("Passwords do not match!", "error");
+            return;
+          }
+
+          if (password.length < 6) {
+            showMessage("Password must be at least 6 characters!", "error");
+            return;
+          }
+
+          const submitBtn = document.querySelector(
+            '#registerForm button[type="submit"]'
+          );
+          const submitText = document.getElementById("submitText");
+          const spinner = document.getElementById("loadingSpinner");
+
+          // Show loading state
+          submitText.textContent = "Creating account...";
+          spinner.classList.remove("hidden");
+          submitBtn.disabled = true;
+
+          const username = document.getElementById("username").value;
+          const email = document.getElementById("email").value;
+
+          try {
+            const response = await fetch(`${API_BASE_URL}/auth/register`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ username, email, password }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+              // Store token in localStorage
+              localStorage.setItem("token", data.data.token);
+              localStorage.setItem(
+                "user",
+                JSON.stringify({
+                  id: data.data._id,
+                  username: data.data.username,
+                  email: data.data.email,
+                })
+              );
+
+              // Show success message
+              showMessage(
+                "Registration successful! Welcome to Centrala Butterfly Trust.",
+                "success"
+              );
+
+              // Redirect to dashboard after 2 seconds
+              setTimeout(() => {
+                window.location.href = "dashboard.html";
+              }, 2000);
+            } else {
+              showMessage(
+                data.message || "Registration failed. Please try again.",
+                "error"
+              );
+            }
+          } catch (error) {
+            showMessage(
+              "Network error. Please check your connection.",
+              "error"
+            );
+            console.error("Registration error:", error);
+          } finally {
+            // Reset button state
+            submitText.textContent = "Create Account";
+            spinner.classList.add("hidden");
+            submitBtn.disabled = false;
+          }
+        });
+
+      function showMessage(text, type) {
+        const container = document.getElementById("messageContainer");
+        const message = document.createElement("div");
+        message.className = `message message-${type}`;
+        message.textContent = text;
+        container.innerHTML = "";
+        container.appendChild(message);
+
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+          if (message.parentNode === container) {
+            container.removeChild(message);
+          }
+        }, 5000);
+      }
+
+      // Check if user is already logged in
+      document.addEventListener("DOMContentLoaded", () => {
+        const token = localStorage.getItem("token");
+        if (token) {
+          window.location.href = "dashboard.html";
+        }
+      });
+    </script>
+  </body>
+</html>

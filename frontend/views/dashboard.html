@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Observations - Centrala Butterfly Trust</title>
+    <link rel="stylesheet" href="../public/css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="container nav-container">
+        <a href="index.html" class="logo">
+          <i class="fas fa-butterfly"></i>
+          <span>Centrala Butterfly Trust</span>
+        </a>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="dashboard.html" class="active">Observations</a>
+          <a href="upload.html">Report Sighting</a>
+          <a href="#" id="logoutBtn" class="btn btn-logout">Logout</a>
+          <span
+            id="userGreeting"
+            style="
+              padding: 0.5rem 1rem;
+              color: var(--primary);
+              font-weight: 600;
+            "
+          ></span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Dashboard Content -->
+    <main class="container">
+      <!-- Welcome Card -->
+      <div class="card">
+        <div
+          class="card-header"
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <div>
+            <h2 class="card-title" id="dashboardTitle">
+              Butterfly Observations
+            </h2>
+            <p>Browse all butterfly sightings reported by our community.</p>
+          </div>
+          <a href="upload.html" class="btn btn-accent">
+            <i class="fas fa-plus"></i> Report New Sighting
+          </a>
+        </div>
+
+        <!-- Search Box -->
+        <div class="search-container">
+          <input
+            type="text"
+            id="searchInput"
+            class="search-box"
+            placeholder="Search observations by keyword, location, or butterfly type..."
+          />
+          <button
+            id="clearSearch"
+            class="btn btn-outline"
+            style="
+              position: absolute;
+              right: 0;
+              top: 0;
+              height: 100%;
+              border-radius: 0 8px 8px 0;
+            "
+          >
+            Clear
+          </button>
+        </div>
+
+        <!-- Filter Options -->
+        <div
+          style="
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+          "
+        >
+          <select
+            id="filterLocation"
+            class="select-control"
+            style="flex: 1; min-width: 150px"
+          >
+            <option value="">All Locations</option>
+            <option value="Erean">Erean</option>
+            <option value="Brunad">Brunad</option>
+            <option value="Bylyn">Bylyn</option>
+            <option value="Docia">Docia</option>
+            <option value="Marend">Marend</option>
+            <option value="Pryn">Pryn</option>
+          </select>
+
+          <select
+            id="filterButterflyType"
+            class="select-control"
+            style="flex: 1; min-width: 150px"
+          >
+            <option value="">All Butterfly Types</option>
+            <option value="Monarch">Monarch</option>
+            <option value="Swallowtail">Swallowtail</option>
+            <option value="Painted Lady">Painted Lady</option>
+            <option value="Blue Morpho">Blue Morpho</option>
+            <option value="Common Buckeye">Common Buckeye</option>
+            <option value="Red Admiral">Red Admiral</option>
+            <option value="Cabbage White">Cabbage White</option>
+            <option value="Other/Unknown">Other/Unknown</option>
+          </select>
+
+          <select
+            id="sortBy"
+            class="select-control"
+            style="flex: 1; min-width: 150px"
+          >
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="location">By Location</option>
+          </select>
+        </div>
+
+        <div id="messageContainer"></div>
+
+        <!-- Posts Grid -->
+        <div id="postsContainer" class="posts-grid">
+          <!-- Posts will be loaded here -->
+        </div>
+
+        <!-- Loading Spinner -->
+        <div id="loadingSpinner" class="spinner hidden"></div>
+
+        <!-- No Results Message -->
+        <div
+          id="noResults"
+          class="hidden"
+          style="text-align: center; padding: 3rem"
+        >
+          <i
+            class="fas fa-butterfly"
+            style="font-size: 3rem; color: #ccc; margin-bottom: 1rem"
+          ></i>
+          <h3>No observations found</h3>
+          <p>
+            Try adjusting your search or filters, or be the first to report a
+            sighting!
+          </p>
+          <a href="upload.html" class="btn btn-primary">Report Sighting</a>
+        </div>
+
+        <!-- My Observations Section (for logged in users) -->
+        <div id="myObservations" class="hidden">
+          <h3 style="margin-top: 3rem; margin-bottom: 1rem">My Observations</h3>
+          <div id="myPostsContainer" class="posts-grid">
+            <!-- User's own posts will be loaded here -->
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container text-center">
+        <p>&copy; 2024 Centrala Butterfly Trust. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <!-- Edit Modal -->
+    <div
+      id="editModal"
+      class="modal hidden"
+      style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+      "
+    >
+      <div
+        class="card"
+        style="max-width: 600px; max-height: 90vh; overflow-y: auto"
+      >
+        <div
+          class="card-header"
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <h3 class="card-title">Edit Observation</h3>
+          <button
+            onclick="closeEditModal()"
+            style="
+              background: none;
+              border: none;
+              font-size: 1.5rem;
+              cursor: pointer;
+              color: var(--gray);
+            "
+          >
+            &times;
+          </button>
+        </div>
+        <form id="editForm">
+          <input type="hidden" id="editPostId" />
+
+          <div class="form-group">
+            <label class="form-label">Location</label>
+            <select id="editLocation" class="select-control" required>
+              <!-- Options will be populated by JavaScript -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Butterfly Type</label>
+            <select id="editButterflyType" class="select-control" required>
+              <!-- Options will be populated by JavaScript -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Primary Activity</label>
+            <select id="editPrimaryActivity" class="select-control" required>
+              <option value="visit">Visit/Passing through</option>
+              <option value="feeding">Feeding</option>
+              <option value="nesting">Nesting</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Duration (minutes)</label>
+            <input
+              type="number"
+              id="editDuration"
+              class="form-control"
+              min="1"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Comments</label>
+            <textarea
+              id="editComments"
+              class="form-control"
+              maxlength="500"
+            ></textarea>
+          </div>
+
+          <div class="form-group" style="display: flex; gap: 1rem">
+            <button type="submit" class="btn btn-primary" style="flex: 1">
+              Save Changes
+            </button>
+            <button
+              type="button"
+              onclick="closeEditModal()"
+              class="btn btn-outline"
+              style="flex: 1"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // API Base URL
+      const API_BASE_URL = "http://localhost:3000/api";
+
+      // Global variables
+      let currentUser = null;
+      let allPosts = [];
+      let filteredPosts = [];
+
+      // Check authentication
+      document.addEventListener("DOMContentLoaded", async () => {
+        const token = localStorage.getItem("token");
+        const userData = localStorage.getItem("user");
+
+        if (!token || !userData) {
+          window.location.href = "login.html";
+          return;
+        }
+
+        currentUser = JSON.parse(userData);
+        document.getElementById(
+          "userGreeting"
+        ).textContent = `Welcome, ${currentUser.username}!`;
+
+        // Load posts
+        await loadPosts();
+
+        // Setup event listeners
+        setupEventListeners();
+
+        // Logout button
+        document.getElementById("logoutBtn").addEventListener("click", (e) => {
+          e.preventDefault();
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          window.location.href = "login.html";
+        });
+      });
+
+      async function loadPosts() {
+        const spinner = document.getElementById("loadingSpinner");
+        const postsContainer = document.getElementById("postsContainer");
+        const noResults = document.getElementById("noResults");
+
+        spinner.classList.remove("hidden");
+        postsContainer.innerHTML = "";
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/posts`);
+          if (response.ok) {
+            allPosts = await response.json();
+            filteredPosts = [...allPosts];
+            displayPosts();
+          } else {
+            showMessage("Failed to load observations.", "error");
+          }
+        } catch (error) {
+          showMessage("Network error. Please check your connection.", "error");
+          console.error("Error loading posts:", error);
+        } finally {
+          spinner.classList.add("hidden");
+        }
+
+        // Show/hide no results message
+        noResults.classList.toggle("hidden", filteredPosts.length > 0);
+      }
+
+      function displayPosts() {
+        const postsContainer = document.getElementById("postsContainer");
+        const myPostsContainer = document.getElementById("myPostsContainer");
+
+        // Clear containers
+        postsContainer.innerHTML = "";
+        myPostsContainer.innerHTML = "";
+
+        // Sort posts
+        sortPosts();
+
+        // Display all posts
+        filteredPosts.forEach((post) => {
+          const postCard = createPostCard(post);
+          postsContainer.appendChild(postCard);
+
+          // If this is current user's post, also add to my posts section
+          if (currentUser && post.username === currentUser.username) {
+            const myPostCard = createPostCard(post, true);
+            myPostsContainer.appendChild(myPostCard);
+          }
+        });
+
+        // Show my observations section if user has posts
+        const myObservations = document.getElementById("myObservations");
+        const myPosts = filteredPosts.filter(
+          (post) => post.username === currentUser.username
+        );
+        myObservations.classList.toggle("hidden", myPosts.length === 0);
+
+        // Update dashboard title
+        document.getElementById("dashboardTitle").textContent =
+          filteredPosts.length === allPosts.length
+            ? `Butterfly Observations (${filteredPosts.length})`
+            : `Butterfly Observations (${filteredPosts.length} of ${allPosts.length})`;
+      }
+
+      function createPostCard(post, isMyPost = false) {
+        const card = document.createElement("div");
+        card.className = "post-card";
+        card.dataset.id = post._id;
+
+        // Format date
+        const observationDate = new Date(post.observationDate);
+        const formattedDate = observationDate.toLocaleDateString("en-US", {
+          weekday: "short",
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        });
+
+        card.innerHTML = `
+                ${
+                  post.imageUrl
+                    ? `<img src="${API_BASE_URL}${post.imageUrl}" alt="${post.butterflyType}" class="post-image" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNGMEYwRjAiLz48cGF0aCBkPSJNNTAgODBDNTAgNjYuMTkyOSA2MS4xOTI5IDU1IDc1IDU1Qzg4LjgwNzEgNTUgMTAwIDY2LjE5MjkgMTAwIDgwQzEwMCA5My44MDcxIDg4LjgwNzEgMTA1IDc1IDEwNUM2MS4xOTI5IDEwNSA1MCA5My44MDcxIDUwIDgwWiIgZmlsbD0iIzRDQTlGRiIvPjxwYXRoIGQ9Ik0yNSAxMjdDMTUgMTI3IDE1IDEzNyAyNSAxNTdDNTUgMTg3IDk1IDE4NyAxMjUgMTU3QzEzNSAxNDcgMTM1IDEzNyAxMjUgMTI3Qzk1IDk3IDU1IDk3IDI1IDEyN1oiIGZpbGw9IiM0Q0E5RkYiLz48L3N2Zz4=';">`
+                    : `<div class="post-image" style="background: linear-gradient(135deg, #4a6fa5, #166088); display: flex; align-items: center; justify-content: center; color: white;">
+                        <i class="fas fa-butterfly" style="font-size: 3rem;"></i>
+                    </div>`
+                }
+                <div class="post-content">
+                    <div class="post-meta">
+                        <span class="post-user">${post.username}</span>
+                        <span class="post-location">${post.location}</span>
+                    </div>
+                    <h4 class="post-title">${post.butterflyType}</h4>
+                    <p class="post-description">${
+                      post.comments || "No description provided"
+                    }</p>
+                    <div style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;">
+                        <div><i class="far fa-clock"></i> ${
+                          post.observationTime
+                        } for ${post.duration} min</div>
+                        <div><i class="far fa-calendar"></i> ${formattedDate}</div>
+                        <div><i class="fas fa-running"></i> ${
+                          post.primaryActivity
+                        }</div>
+                    </div>
+                    ${
+                      isMyPost ||
+                      (currentUser && post.username === currentUser.username)
+                        ? `
+                        <div class="post-actions">
+                            <button onclick="editPost('${post._id}')" class="btn btn-outline" style="flex: 1;">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button onclick="deletePost('${post._id}')" class="btn btn-danger" style="flex: 1;">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    `
+                        : ""
+                    }
+                </div>
+            `;
+
+        return card;
+      }
+
+      function setupEventListeners() {
+        // Search input
+        const searchInput = document.getElementById("searchInput");
+        let searchTimeout;
+
+        searchInput.addEventListener("input", () => {
+          clearTimeout(searchTimeout);
+          searchTimeout = setTimeout(applyFilters, 300);
+        });
+
+        // Clear search
+        document.getElementById("clearSearch").addEventListener("click", () => {
+          searchInput.value = "";
+          applyFilters();
+        });
+
+        // Filter selects
+        document
+          .getElementById("filterLocation")
+          .addEventListener("change", applyFilters);
+        document
+          .getElementById("filterButterflyType")
+          .addEventListener("change", applyFilters);
+        document
+          .getElementById("sortBy")
+          .addEventListener("change", applyFilters);
+
+        // Edit form submission
+        document
+          .getElementById("editForm")
+          .addEventListener("submit", handleEditSubmit);
+      }
+
+      function applyFilters() {
+        const searchTerm = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+        const locationFilter = document.getElementById("filterLocation").value;
+        const butterflyFilter = document.getElementById(
+          "filterButterflyType"
+        ).value;
+
+        filteredPosts = allPosts.filter((post) => {
+          // Search term filter
+          const matchesSearch =
+            !searchTerm ||
+            post.comments?.toLowerCase().includes(searchTerm) ||
+            post.butterflyType.toLowerCase().includes(searchTerm) ||
+            post.location.toLowerCase().includes(searchTerm) ||
+            post.username.toLowerCase().includes(searchTerm);
+
+          // Location filter
+          const matchesLocation =
+            !locationFilter || post.location === locationFilter;
+
+          // Butterfly type filter
+          const matchesButterfly =
+            !butterflyFilter || post.butterflyType === butterflyFilter;
+
+          return matchesSearch && matchesLocation && matchesButterfly;
+        });
+
+        displayPosts();
+      }
+
+      function sortPosts() {
+        const sortBy = document.getElementById("sortBy").value;
+
+        filteredPosts.sort((a, b) => {
+          switch (sortBy) {
+            case "newest":
+              return (
+                new Date(b.createdAt || b.observationDate) -
+                new Date(a.createdAt || a.observationDate)
+              );
+            case "oldest":
+              return (
+                new Date(a.createdAt || a.observationDate) -
+                new Date(b.createdAt || b.observationDate)
+              );
+            case "location":
+              return a.location.localeCompare(b.location);
+            default:
+              return 0;
+          }
+        });
+      }
+
+      async function editPost(postId) {
+        const post = allPosts.find((p) => p._id === postId);
+        if (!post) return;
+
+        // Populate edit form
+        document.getElementById("editPostId").value = postId;
+        document.getElementById("editLocation").value = post.location;
+        document.getElementById("editButterflyType").value = post.butterflyType;
+        document.getElementById("editPrimaryActivity").value =
+          post.primaryActivity;
+        document.getElementById("editDuration").value = post.duration;
+        document.getElementById("editComments").value = post.comments || "";
+
+        // Populate location options
+        const locationSelect = document.getElementById("editLocation");
+        locationSelect.innerHTML = `
+                <option value="Erean">Erean</option>
+                <option value="Brunad">Brunad</option>
+                <option value="Bylyn">Bylyn</option>
+                <option value="Docia">Docia</option>
+                <option value="Marend">Marend</option>
+                <option value="Pryn">Pryn</option>
+                <option value="Zord">Zord</option>
+                <option value="Yaean">Yaean</option>
+                <option value="Frestin">Frestin</option>
+                <option value="Stonyam">Stonyam</option>
+                <option value="Ryall">Ryall</option>
+                <option value="Ruril">Ruril</option>
+                <option value="Keivia">Keivia</option>
+                <option value="Tallan">Tallan</option>
+                <option value="Adohad">Adohad</option>
+                <option value="Obelyn">Obelyn</option>
+                <option value="Holmer">Holmer</option>
+                <option value="Vertwall">Vertwall</option>
+            `;
+        locationSelect.value = post.location;
+
+        // Populate butterfly options
+        const butterflySelect = document.getElementById("editButterflyType");
+        butterflySelect.innerHTML = `
+                <option value="Monarch">Monarch</option>
+                <option value="Swallowtail">Swallowtail</option>
+                <option value="Painted Lady">Painted Lady</option>
+                <option value="Blue Morpho">Blue Morpho</option>
+                <option value="Common Buckeye">Common Buckeye</option>
+                <option value="Red Admiral">Red Admiral</option>
+                <option value="Cabbage White">Cabbage White</option>
+                <option value="Other/Unknown">Other/Unknown</option>
+            `;
+        butterflySelect.value = post.butterflyType;
+
+        // Show modal
+        document.getElementById("editModal").classList.remove("hidden");
+      }
+
+      function closeEditModal() {
+        document.getElementById("editModal").classList.add("hidden");
+        document.getElementById("editForm").reset();
+      }
+
+      async function handleEditSubmit(e) {
+        e.preventDefault();
+
+        const postId = document.getElementById("editPostId").value;
+        const formData = {
+          location: document.getElementById("editLocation").value,
+          butterflyType: document.getElementById("editButterflyType").value,
+          primaryActivity: document.getElementById("editPrimaryActivity").value,
+          duration: parseInt(document.getElementById("editDuration").value),
+          comments: document.getElementById("editComments").value,
+        };
+
+        try {
+          const token = localStorage.getItem("token");
+          const response = await fetch(`${API_BASE_URL}/posts/${postId}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(formData),
+          });
+
+          if (response.ok) {
+            showMessage("Observation updated successfully!", "success");
+            closeEditModal();
+            await loadPosts(); // Reload posts
+          } else {
+            const data = await response.json();
+            showMessage(data.message || "Update failed.", "error");
+          }
+        } catch (error) {
+          showMessage("Network error. Please check your connection.", "error");
+          console.error("Edit error:", error);
+        }
+      }
+
+      async function deletePost(postId) {
+        if (
+          !confirm(
+            "Are you sure you want to delete this observation? This action cannot be undone."
+          )
+        ) {
+          return;
+        }
+
+        try {
+          const token = localStorage.getItem("token");
+          const response = await fetch(`${API_BASE_URL}/posts/${postId}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (response.ok) {
+            showMessage("Observation deleted successfully!", "success");
+            await loadPosts(); // Reload posts
+          } else {
+            const data = await response.json();
+            showMessage(data.message || "Delete failed.", "error");
+          }
+        } catch (error) {
+          showMessage("Network error. Please check your connection.", "error");
+          console.error("Delete error:", error);
+        }
+      }
+
+      function showMessage(text, type) {
+        const container = document.getElementById("messageContainer");
+        const message = document.createElement("div");
+        message.className = `message message-${type}`;
+        message.textContent = text;
+        container.innerHTML = "";
+        container.appendChild(message);
+
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+          if (message.parentNode === container) {
+            container.removeChild(message);
+          }
+        }, 5000);
+      }
+    </script>
+  </body>
+</html>

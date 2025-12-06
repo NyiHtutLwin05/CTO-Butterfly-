@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Centrala Butterfly Trust</title>
+    <link rel="stylesheet" href="../public/css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="container nav-container">
+        <a href="index.html" class="logo">
+          <i class="fas fa-butterfly"></i>
+          <span>Centrala Butterfly Trust</span>
+        </a>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="register.html" class="btn btn-register">Register</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Login Form -->
+    <main class="container">
+      <div class="card" style="max-width: 500px; margin: 3rem auto">
+        <div class="card-header">
+          <h2 class="card-title">Login to Your Account</h2>
+          <p>Welcome back! Please enter your credentials.</p>
+        </div>
+
+        <div id="messageContainer"></div>
+
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="username" class="form-label">Username or Email</label>
+            <input
+              type="text"
+              id="username"
+              class="form-control"
+              required
+              placeholder="Enter your username or email"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password" class="form-label">Password</label>
+            <input
+              type="password"
+              id="password"
+              class="form-control"
+              required
+              placeholder="Enter your password"
+            />
+            <div class="form-text">
+              <a href="#" style="text-decoration: none">Forgot password?</a>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-block">
+              <span id="submitText">Login</span>
+              <div
+                id="loadingSpinner"
+                class="spinner hidden"
+                style="
+                  display: inline-block;
+                  width: 20px;
+                  height: 20px;
+                  margin-left: 10px;
+                "
+              ></div>
+            </button>
+          </div>
+
+          <div class="text-center">
+            <p>
+              Don't have an account?
+              <a
+                href="register.html"
+                style="text-decoration: none; font-weight: 600"
+                >Register here</a
+              >
+            </p>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container text-center">
+        <p>&copy; 2024 Centrala Butterfly Trust. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script>
+      // API Base URL
+      const API_BASE_URL = "http://localhost:3000/api";
+
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const submitBtn = document.querySelector(
+            '#loginForm button[type="submit"]'
+          );
+          const submitText = document.getElementById("submitText");
+          const spinner = document.getElementById("loadingSpinner");
+
+          // Show loading state
+          submitText.textContent = "Logging in...";
+          spinner.classList.remove("hidden");
+          submitBtn.disabled = true;
+
+          const username = document.getElementById("username").value;
+          const password = document.getElementById("password").value;
+
+          try {
+            const response = await fetch(`${API_BASE_URL}/auth/login`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ username, password }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+              // Store token in localStorage
+              localStorage.setItem("token", data.data.token);
+              localStorage.setItem(
+                "user",
+                JSON.stringify({
+                  id: data.data._id,
+                  username: data.data.username,
+                  email: data.data.email,
+                })
+              );
+
+              // Show success message
+              showMessage(
+                "Login successful! Redirecting to dashboard...",
+                "success"
+              );
+
+              // Redirect to dashboard after 1.5 seconds
+              setTimeout(() => {
+                window.location.href = "dashboard.html";
+              }, 1500);
+            } else {
+              showMessage(
+                data.message || "Login failed. Please check your credentials.",
+                "error"
+              );
+            }
+          } catch (error) {
+            showMessage(
+              "Network error. Please check your connection.",
+              "error"
+            );
+            console.error("Login error:", error);
+          } finally {
+            // Reset button state
+            submitText.textContent = "Login";
+            spinner.classList.add("hidden");
+            submitBtn.disabled = false;
+          }
+        });
+
+      function showMessage(text, type) {
+        const container = document.getElementById("messageContainer");
+        const message = document.createElement("div");
+        message.className = `message message-${type}`;
+        message.textContent = text;
+        container.innerHTML = "";
+        container.appendChild(message);
+
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+          if (message.parentNode === container) {
+            container.removeChild(message);
+          }
+        }, 5000);
+      }
+
+      // Check if user is already logged in
+      document.addEventListener("DOMContentLoaded", () => {
+        const token = localStorage.getItem("token");
+        if (token) {
+          window.location.href = "dashboard.html";
+        }
+      });
+    </script>
+  </body>
+</html>

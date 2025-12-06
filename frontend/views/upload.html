@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Report Sighting - Centrala Butterfly Trust</title>
+    <link rel="stylesheet" href="../public/css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="container nav-container">
+        <a href="index.html" class="logo">
+          <i class="fas fa-butterfly"></i>
+          <span>Centrala Butterfly Trust</span>
+        </a>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="dashboard.html">Observations</a>
+          <a href="upload.html" class="active">Report Sighting</a>
+          <a href="#" id="logoutBtn" class="btn btn-logout">Logout</a>
+          <span
+            id="userGreeting"
+            style="
+              padding: 0.5rem 1rem;
+              color: var(--primary);
+              font-weight: 600;
+            "
+          ></span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Upload Form -->
+    <main class="container">
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Report Butterfly Sighting</h2>
+          <p>
+            Share your butterfly observation to help with conservation efforts
+            in Centrala.
+          </p>
+        </div>
+
+        <div id="messageContainer"></div>
+
+        <form id="uploadForm" enctype="multipart/form-data">
+          <div
+            class="form-row"
+            style="display: flex; gap: 1rem; margin-bottom: 1.5rem"
+          >
+            <div class="form-group" style="flex: 1">
+              <label for="location" class="form-label"
+                >Location in Centrala *</label
+              >
+              <select id="location" class="select-control" required>
+                <option value="">Select a location</option>
+                <option value="Erean">Erean</option>
+                <option value="Brunad">Brunad</option>
+                <option value="Bylyn">Bylyn</option>
+                <option value="Docia">Docia</option>
+                <option value="Marend">Marend</option>
+                <option value="Pryn">Pryn</option>
+                <option value="Zord">Zord</option>
+                <option value="Yaean">Yaean</option>
+                <option value="Frestin">Frestin</option>
+                <option value="Stonyam">Stonyam</option>
+                <option value="Ryall">Ryall</option>
+                <option value="Ruril">Ruril</option>
+                <option value="Keivia">Keivia</option>
+                <option value="Tallan">Tallan</option>
+                <option value="Adohad">Adohad</option>
+                <option value="Obelyn">Obelyn</option>
+                <option value="Holmer">Holmer</option>
+                <option value="Vertwall">Vertwall</option>
+              </select>
+            </div>
+
+            <div class="form-group" style="flex: 1">
+              <label for="butterflyType" class="form-label"
+                >Butterfly Type *</label
+              >
+              <select id="butterflyType" class="select-control" required>
+                <option value="">Select butterfly type</option>
+                <option value="Monarch">Monarch</option>
+                <option value="Swallowtail">Swallowtail</option>
+                <option value="Painted Lady">Painted Lady</option>
+                <option value="Blue Morpho">Blue Morpho</option>
+                <option value="Common Buckeye">Common Buckeye</option>
+                <option value="Red Admiral">Red Admiral</option>
+                <option value="Cabbage White">Cabbage White</option>
+                <option value="Other/Unknown">Other/Unknown</option>
+              </select>
+            </div>
+          </div>
+
+          <div
+            class="form-row"
+            style="display: flex; gap: 1rem; margin-bottom: 1.5rem"
+          >
+            <div class="form-group" style="flex: 1">
+              <label for="observationDate" class="form-label"
+                >Date of Observation *</label
+              >
+              <input
+                type="date"
+                id="observationDate"
+                class="form-control"
+                required
+              />
+            </div>
+
+            <div class="form-group" style="flex: 1">
+              <label for="observationTime" class="form-label"
+                >Time of Observation *</label
+              >
+              <input
+                type="time"
+                id="observationTime"
+                class="form-control"
+                required
+              />
+            </div>
+
+            <div class="form-group" style="flex: 1">
+              <label for="duration" class="form-label"
+                >Duration (minutes) *</label
+              >
+              <input
+                type="number"
+                id="duration"
+                class="form-control"
+                min="1"
+                required
+                placeholder="e.g., 15"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="primaryActivity" class="form-label"
+              >Primary Activity Observed *</label
+            >
+            <select id="primaryActivity" class="select-control" required>
+              <option value="">Select activity</option>
+              <option value="visit">Visit/Passing through</option>
+              <option value="feeding">Feeding</option>
+              <option value="nesting">Nesting</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="comments" class="form-label">Comments & Notes</label>
+            <textarea
+              id="comments"
+              class="form-control"
+              placeholder="Describe what you observed, weather conditions, behavior, etc. (Max 500 characters)"
+              maxlength="500"
+            ></textarea>
+            <div class="form-text">
+              <span id="charCount">0</span>/500 characters
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="image" class="form-label"
+              >Upload Photo (Optional)</label
+            >
+            <div class="file-upload-container">
+              <input
+                type="file"
+                id="image"
+                class="form-control"
+                accept="image/jpeg, image/png"
+              />
+              <div class="form-text">
+                Maximum size: 1.2MB. Allowed formats: JPG, PNG
+              </div>
+              <div id="imagePreview" style="margin-top: 1rem"></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-block">
+              <span id="submitText">Submit Observation</span>
+              <div
+                id="loadingSpinner"
+                class="spinner hidden"
+                style="
+                  display: inline-block;
+                  width: 20px;
+                  height: 20px;
+                  margin-left: 10px;
+                "
+              ></div>
+            </button>
+            <button
+              type="button"
+              id="clearBtn"
+              class="btn btn-outline btn-block"
+              style="margin-top: 0.5rem"
+            >
+              Clear Form
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Guidelines -->
+      <div class="card">
+        <h3 class="card-title">Observation Guidelines</h3>
+        <ul style="list-style: none; padding: 0">
+          <li style="padding: 0.5rem 0">
+            <i
+              class="fas fa-info-circle"
+              style="color: var(--primary); margin-right: 10px"
+            ></i>
+            Be as accurate as possible with location and time
+          </li>
+          <li style="padding: 0.5rem 0">
+            <i
+              class="fas fa-info-circle"
+              style="color: var(--primary); margin-right: 10px"
+            ></i>
+            If unsure of butterfly type, select "Other/Unknown"
+          </li>
+          <li style="padding: 0.5rem 0">
+            <i
+              class="fas fa-info-circle"
+              style="color: var(--primary); margin-right: 10px"
+            ></i>
+            Photos help with identification but are optional
+          </li>
+          <li style="padding: 0.5rem 0">
+            <i
+              class="fas fa-info-circle"
+              style="color: var(--primary); margin-right: 10px"
+            ></i>
+            Your observations contribute to urban planning decisions
+          </li>
+        </ul>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container text-center">
+        <p>&copy; 2024 Centrala Butterfly Trust. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script>
+      // API Base URL
+      const API_BASE_URL = "http://localhost:3000/api";
+
+      // Check authentication
+      document.addEventListener("DOMContentLoaded", () => {
+        const token = localStorage.getItem("token");
+        const userData = localStorage.getItem("user");
+
+        if (!token || !userData) {
+          window.location.href = "login.html";
+          return;
+        }
+
+        const user = JSON.parse(userData);
+        document.getElementById(
+          "userGreeting"
+        ).textContent = `Welcome, ${user.username}!`;
+
+        // Set today's date as default
+        const today = new Date().toISOString().split("T")[0];
+        document.getElementById("observationDate").value = today;
+
+        // Set current time as default
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, "0");
+        const minutes = now.getMinutes().toString().padStart(2, "0");
+        document.getElementById(
+          "observationTime"
+        ).value = `${hours}:${minutes}`;
+
+        // Logout button
+        document.getElementById("logoutBtn").addEventListener("click", (e) => {
+          e.preventDefault();
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          window.location.href = "login.html";
+        });
+      });
+
+      // Character count for comments
+      document.getElementById("comments").addEventListener("input", (e) => {
+        document.getElementById("charCount").textContent =
+          e.target.value.length;
+      });
+
+      // Image preview
+      document.getElementById("image").addEventListener("change", function (e) {
+        const file = e.target.files[0];
+        const preview = document.getElementById("imagePreview");
+
+        if (file) {
+          if (file.size > 1.2 * 1024 * 1024) {
+            showMessage("File too large! Maximum size is 1.2MB.", "error");
+            this.value = "";
+            preview.innerHTML = "";
+            return;
+          }
+
+          if (!file.type.match("image/jpeg") && !file.type.match("image/png")) {
+            showMessage("Only JPG and PNG images are allowed!", "error");
+            this.value = "";
+            preview.innerHTML = "";
+            return;
+          }
+
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            preview.innerHTML = `
+                        <div style="position: relative; display: inline-block;">
+                            <img src="${event.target.result}" alt="Preview" style="max-width: 200px; border-radius: 8px;">
+                            <button type="button" onclick="document.getElementById('image').value = ''; document.getElementById('imagePreview').innerHTML = '';" 
+                                style="position: absolute; top: 5px; right: 5px; background: var(--danger); color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer;">
+                                ×
+                            </button>
+                        </div>
+                    `;
+          };
+          reader.readAsDataURL(file);
+        } else {
+          preview.innerHTML = "";
+        }
+      });
+
+      // Clear form
+      document.getElementById("clearBtn").addEventListener("click", () => {
+        document.getElementById("uploadForm").reset();
+        document.getElementById("imagePreview").innerHTML = "";
+        document.getElementById("charCount").textContent = "0";
+      });
+
+      // Form submission
+      document
+        .getElementById("uploadForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const submitBtn = document.querySelector(
+            '#uploadForm button[type="submit"]'
+          );
+          const submitText = document.getElementById("submitText");
+          const spinner = document.getElementById("loadingSpinner");
+
+          // Show loading state
+          submitText.textContent = "Submitting...";
+          spinner.classList.remove("hidden");
+          submitBtn.disabled = true;
+
+          const user = JSON.parse(localStorage.getItem("user"));
+          const formData = new FormData();
+
+          // Add form data
+          formData.append("username", user.username);
+          formData.append(
+            "location",
+            document.getElementById("location").value
+          );
+          formData.append(
+            "observationDate",
+            document.getElementById("observationDate").value
+          );
+          formData.append(
+            "observationTime",
+            document.getElementById("observationTime").value
+          );
+          formData.append(
+            "butterflyType",
+            document.getElementById("butterflyType").value
+          );
+          formData.append(
+            "primaryActivity",
+            document.getElementById("primaryActivity").value
+          );
+          formData.append(
+            "duration",
+            document.getElementById("duration").value
+          );
+          formData.append(
+            "comments",
+            document.getElementById("comments").value
+          );
+
+          // Add image if selected
+          const imageInput = document.getElementById("image");
+          if (imageInput.files[0]) {
+            formData.append("image", imageInput.files[0]);
+          }
+
+          try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(`${API_BASE_URL}/posts`, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+              body: formData,
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              showMessage("Observation submitted successfully!", "success");
+
+              // Clear form after successful submission
+              setTimeout(() => {
+                document.getElementById("uploadForm").reset();
+                document.getElementById("imagePreview").innerHTML = "";
+                document.getElementById("charCount").textContent = "0";
+
+                // Redirect to dashboard after 2 seconds
+                window.location.href = "dashboard.html";
+              }, 1500);
+            } else {
+              showMessage(
+                data.message || "Submission failed. Please try again.",
+                "error"
+              );
+            }
+          } catch (error) {
+            showMessage(
+              "Network error. Please check your connection.",
+              "error"
+            );
+            console.error("Upload error:", error);
+          } finally {
+            // Reset button state
+            submitText.textContent = "Submit Observation";
+            spinner.classList.add("hidden");
+            submitBtn.disabled = false;
+          }
+        });
+
+      function showMessage(text, type) {
+        const container = document.getElementById("messageContainer");
+        const message = document.createElement("div");
+        message.className = `message message-${type}`;
+        message.textContent = text;
+        container.innerHTML = "";
+        container.appendChild(message);
+
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+          if (message.parentNode === container) {
+            container.removeChild(message);
+          }
+        }, 5000);
+      }
+    </script>
+  </body>
+</html>
