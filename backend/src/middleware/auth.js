@@ -33,7 +33,6 @@ export const protect = async (req, res, next) => {
   }
 };
 
-// Optional: Admin middleware (if you need admin routes)
 export const admin = (req, res, next) => {
   if (req.user && req.user.isAdmin) {
     next();

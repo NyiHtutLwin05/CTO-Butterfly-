@@ -1,4 +1,3 @@
-// src/routes/authRoutes.js (update this file)
 import express from "express";
 import {
   registerUser,

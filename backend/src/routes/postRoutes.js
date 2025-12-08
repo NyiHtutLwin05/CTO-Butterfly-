@@ -1,4 +1,3 @@
-// src/routes/postRoutes.js (update this file)
 import express from "express";
 import {
   createPost,

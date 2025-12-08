@@ -1,4 +1,3 @@
-// src/controllers/authController.js (update this file)
 import User from "../models/User.js";
 
 // Register User
